@@ -2,7 +2,7 @@
 from google import genai
 from google.genai import types
 
-client = genai.Client(api_key="AIzaSyBxjA4OnIGtq1ubbebJZbEd2y2cicSYs4E")
+client = genai.Client(api_key="")
 
 
 # summarization
