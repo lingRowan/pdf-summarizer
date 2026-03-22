@@ -1,15 +1,49 @@
-from transformers import pipeline
+
+from google import genai
+from google.genai import types
+
+client = genai.Client(api_key="AIzaSyBxjA4OnIGtq1ubbebJZbEd2y2cicSYs4E")
 
 
+# summarization
 
-Sumarizer = pipeline('summarization', model="knkarthick/MEETING_SUMMARY")
 
-def summary_pdf(chunks):
-    summary_result = []
-    for  chunk in chunks:
-        summary = Sumarizer(chunk)
-        summary_result.append(summary[0]["summary_text"])
-    return " ".join(summary_result)
+def summary_pdf(uploaded_pdf):
+    prompt = "Summarize this document clearly and briefly."
+
+    response = client.models.generate_content(
+        model="gemini-3-flash-preview",
+        contents=[
+            types.Part.from_bytes(
+                data=uploaded_pdf.read(),
+                mime_type="application/pdf",
+            ),
+            prompt,
+        ],
+    )
+
+    return response.text
+    
+        
+
+def ask_question(question, uploaded_pdf):
+    prompt = f"""
+Answer the question based only on the context below.
+If the answer is not in the context, say: Not found.
+
+
+Question:
+{question}
+"""
+
+    response = client.models.generate_content(model="gemini-3-flash-preview",
+        contents=[
+            types.Part.from_bytes(
+                data=uploaded_pdf.read(),
+                mime_type="application/pdf",
+            ),
+            prompt,],)
+    return response.text
 
 
 
